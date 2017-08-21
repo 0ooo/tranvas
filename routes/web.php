@@ -15,7 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::resource('events', 'Event\EventController');
+Route::group(['middleware' => 'auth'], function (){
+    Route::resource('events', 'Event\EventController');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
