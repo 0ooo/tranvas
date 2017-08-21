@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Event;
 
+use App\Models\Event\Event;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -14,7 +16,19 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $today = Carbon::today()->format('Y-m-d');
+
+        $upcomingEvents = Event::where('end_date', '>', $today)
+                               ->orderBy('start_date', 'desc')
+                               ->get();
+
+        $pastEvents = Event::where('end_date', '<', $today)
+                           ->orderBy('start_date', 'desc')
+                           ->get();
+
+        return view('event.index')
+                ->with('upcomingEvents', $upcomingEvents)
+                ->with('pastEvents', $pastEvents);
     }
 
     /**
@@ -41,12 +55,13 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param Event $event
+     *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Event $event)
     {
-        //
+        return view('event.show', compact('event'));
     }
 
     /**
