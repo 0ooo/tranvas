@@ -14,11 +14,13 @@ class EventTest extends TestCase
     use DatabaseMigrations;
     
     private $user;
+    private $event;
 
     protected function setUp()
     {
         parent::setUp();
         $this->user = factory(User::class)->create();
+        $this->event = factory(Event::class)->create();
     }
 
     /** @test */
@@ -31,12 +33,20 @@ class EventTest extends TestCase
     /** @test */
     public function a_user_can_see_list_of_events()
     {
-        $event = factory(Event::class)->create();
-
         $this->actingAs($this->user)
              ->get(route('events.index'))
              ->assertStatus(200)
-             ->assertSeeText($event->title)
-             ->assertSeeText($event->description);
+             ->assertSeeText($this->event->title)
+             ->assertSeeText($this->event->description);
+    }
+
+    /** @test */
+    public function a_user_can_view_details()
+    {
+        $this->actingAs($this->user)
+            ->get(route('events.show', $this->event->id))
+            ->assertStatus(200)
+            ->assertSeeText($this->event->title)
+            ->assertSeeText($this->event->creator->name);
     }
 }

@@ -85,6 +85,4 @@ class RegisterController extends Controller
         Auth::logout();
         return redirect()->route('welcome');
     }
-
-
 }
